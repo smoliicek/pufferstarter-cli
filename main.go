@@ -5,6 +5,7 @@ import (
 	"os"
 	"smoliicek/pufferstarter/pkg/auth"
 	"smoliicek/pufferstarter/pkg/operator"
+	"smoliicek/pufferstarter/pkg/probe"
 
 	"github.com/spf13/cobra"
 
@@ -15,14 +16,30 @@ func main() {
 	var serverID string
 	var status string
 
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "pufferstarter-cli",
 		Short: "A CLI tool for server management",
 		Run: func(cmd *cobra.Command, args []string) {
-
 			if cmd.Flags().Changed("listAll") {
 				fmt.Println("Listing all servers...")
-				// getAllServers(0)
+
+				authToken, err := getToken()
+				if err != nil {
+					fmt.Printf("Error getting auth token: %v\n", err)
+					os.Exit(1)
+				}
+
+				serverIP := os.Getenv("SERVER_IP")
+
+				output, err := probe.GetAllServers(serverIP, authToken)
+				if err != nil {
+					fmt.Printf("Error getting server list: %v\n", err)
+					os.Exit(1)
+				}
+
+				if output != "" {
+					fmt.Println("Response:", output)
+				}
 				return
 			}
 
