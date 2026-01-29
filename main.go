@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"smoliicek/pufferstarter/pkg/auth"
+	"smoliicek/pufferstarter/pkg/operator"
 
 	"github.com/spf13/cobra"
 
@@ -47,7 +48,7 @@ func main() {
 					// setServerStatus(ip, token, 0, serverID, "on")
 				case "off":
 					fmt.Println("Stopping server", serverID)
-					// setServerStatus(ip, token, 0, serverID, "off")
+					operator.ChangeServerStatus("serverIP", "authToken", serverID, "off")
 				case "kill":
 					fmt.Println("Killing server", serverID)
 					// setServerStatus(ip, token, 0, serverID, "kill")

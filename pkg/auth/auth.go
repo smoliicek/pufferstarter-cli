@@ -25,7 +25,7 @@ func GetAuthToken(clientID, clientSecret, serverIP string) (string, error) {
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", "pufferstarter-cli/0.1")
+	req.Header.Set("User-Agent", "pufferstarter-cli/4.0")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
