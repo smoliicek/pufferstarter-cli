@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 )
 
 func ChangeServerStatus(serverIP, authToken, serverID, status string) (string, error) {
@@ -16,12 +15,16 @@ func ChangeServerStatus(serverIP, authToken, serverID, status string) (string, e
 
 	switch status {
 	case "on":
+		fmt.Println("Turning server on")
 		apiLink = baseURL + "start"
 	case "off":
+		fmt.Println("Turning server off")
 		apiLink = baseURL + "stop"
 	case "restart":
+		fmt.Println("Restarting server")
 		apiLink = baseURL + "restart"
 	case "kill":
+		fmt.Println("Killing server")
 		apiLink = baseURL + "kill"
 	default:
 		return "", fmt.Errorf("invalid status: %s, use on, off, restart or kill", status)
@@ -48,9 +51,18 @@ func ChangeServerStatus(serverIP, authToken, serverID, status string) (string, e
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("Status: %d\n", resp.StatusCode)
 
-	os.Exit(255)
+	if resp.StatusCode != 200 && resp.StatusCode != 202 && resp.StatusCode != 204 {
+		return "", fmt.Errorf("request failed: %s", resp.Status)
+	}
+
+	if resp.StatusCode == 400 {
+		return "", fmt.Errorf("bad request: %s", body)
+	}
+
+	if resp.StatusCode == 401 {
+		return "", fmt.Errorf("unauthorized: %s", body)
+	}
 
 	return string(body), nil
 }

@@ -42,18 +42,61 @@ func main() {
 					os.Exit(1)
 				}
 
+				authToken, err := getToken()
+				if err != nil {
+					fmt.Printf("Error getting auth token: %v\n", err)
+					os.Exit(1)
+				}
+
+				serverIP := os.Getenv("SERVER_IP")
+
 				switch status {
 				case "on":
 					fmt.Println("Starting server", serverID)
-					// setServerStatus(ip, token, 0, serverID, "on")
+					output, err := operator.ChangeServerStatus(serverIP, authToken, serverID, "on")
+					if err != nil {
+						fmt.Printf("Error changing server status: %v\n", err)
+						os.Exit(1)
+					}
+
+					if output != "" {
+						fmt.Println("Response:", output)
+					}
 				case "off":
 					fmt.Println("Stopping server", serverID)
-					operator.ChangeServerStatus("serverIP", "authToken", serverID, "off")
+					output, err := operator.ChangeServerStatus(serverIP, authToken, serverID, "off")
+					if err != nil {
+						fmt.Printf("Error changing server status: %v\n", err)
+						os.Exit(1)
+					}
+
+					if output != "" {
+						fmt.Println("Response:", output)
+					}
 				case "kill":
 					fmt.Println("Killing server", serverID)
-					// setServerStatus(ip, token, 0, serverID, "kill")
+					output, err := operator.ChangeServerStatus(serverIP, authToken, serverID, "kill")
+					if err != nil {
+						fmt.Printf("Error changing server status: %v\n", err)
+						os.Exit(1)
+					}
+
+					if output != "" {
+						fmt.Println("Response:", output)
+					}
+				case "restart":
+					fmt.Println("Restarting server", serverID)
+					output, err := operator.ChangeServerStatus(serverIP, authToken, serverID, "restart")
+					if err != nil {
+						fmt.Printf("Error changing server status: %v\n", err)
+						os.Exit(1)
+					}
+
+					if output != "" {
+						fmt.Println("Response:", output)
+					}
 				default:
-					fmt.Println("Invalid status. Use on, off, or kill.")
+					fmt.Println("Invalid status. Use on, off, restart, or kill.")
 				}
 				return
 			}
@@ -68,14 +111,14 @@ func main() {
 	rootCmd.Flags().StringVar(&serverID, "id", "", "Set the Server ID (length: 8)")
 	rootCmd.Flags().BoolP("listAll", "l", false, "Lists all servers and IDs")
 	rootCmd.Flags().BoolP("getInfo", "g", false, "Gets info about a server (requires --id)")
-	rootCmd.Flags().StringVarP(&status, "setStatus", "s", "", "Set status: on, off, kill (requires --id)")
+	rootCmd.Flags().StringVarP(&status, "setStatus", "s", "", "Set status: on, off, restart, kill (requires --id)")
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
-func getToken() {
+func getToken() (string, error) {
 	err := godotenv.Load()
 	if err != nil {
 		panic("Error loading .env file")
@@ -90,5 +133,5 @@ func getToken() {
 		panic(err)
 	}
 
-	fmt.Println("Auth Token:", token)
+	return token, err
 }
