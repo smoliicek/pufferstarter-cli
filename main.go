@@ -37,9 +37,11 @@ func main() {
 					os.Exit(1)
 				}
 
-				if output != "" {
-					fmt.Println("Response:", output)
+				if output == "" {
+					fmt.Printf("Server list is empty.\n")
+					os.Exit(1)
 				}
+
 				return
 			}
 

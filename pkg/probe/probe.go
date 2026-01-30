@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 )
 
-func getAllServers(serverIP, authToken string) (string, error) {
+func GetAllServers(serverIP, authToken string) (string, error) {
 	apiLink := fmt.Sprintf("https://%s/api/servers/", serverIP)
 	var bodyReader io.Reader = nil
 
@@ -33,10 +32,7 @@ func getAllServers(serverIP, authToken string) (string, error) {
 		return "", err
 	}
 
-	fmt.Println(string(body))
-	os.Exit(255)
-
-	/*if resp.StatusCode != 200 && resp.StatusCode != 202 && resp.StatusCode != 204 {
+	if resp.StatusCode != 200 && resp.StatusCode != 202 && resp.StatusCode != 204 {
 		return "", fmt.Errorf("request failed: %s", resp.Status)
 	}
 
@@ -46,7 +42,7 @@ func getAllServers(serverIP, authToken string) (string, error) {
 
 	if resp.StatusCode == 401 {
 		return "", fmt.Errorf("unauthorized: %s", body)
-	}*/
+	}
 
 	return string(body), nil
 }
