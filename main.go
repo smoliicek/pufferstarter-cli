@@ -100,6 +100,7 @@ func main() {
 					os.Exit(1)
 				}
 				fmt.Printf("Getting info for server %s\n", serverID)
+				fmt.Println("Function not yet implemented.")
 				// getServerInfo(ip, token, 0, serverID)
 				return
 			}
