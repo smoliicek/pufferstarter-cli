@@ -1,16 +1,37 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"smoliicek/pufferstarter/pkg/auth"
 	"smoliicek/pufferstarter/pkg/operator"
 	"smoliicek/pufferstarter/pkg/probe"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 
 	"github.com/joho/godotenv"
 )
+
+type ServerResponse struct {
+	Servers []Server `json:"servers"`
+	Paging  struct {
+		Total int `json:"total"`
+	} `json:"paging"`
+}
+
+type Server struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Port int    `json:"port"`
+	Type string `json:"type"`
+	Node struct {
+		ID         int    `json:"id"`   // Added this
+		Name       string `json:"name"` // Added this
+		PublicHost string `json:"publicHost"`
+	} `json:"node"`
+}
 
 func main() {
 	var serverID string
@@ -41,6 +62,34 @@ func main() {
 					fmt.Printf("Server list is empty.\n")
 					os.Exit(1)
 				}
+
+				var data ServerResponse
+				err = json.Unmarshal([]byte(output), &data)
+				if err != nil {
+					fmt.Printf("Error parsing response: %v\n", err)
+					os.Exit(1)
+				}
+
+				if len(data.Servers) == 0 {
+					fmt.Println("No servers found on this panel.")
+					return
+				}
+
+				w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+
+				fmt.Fprintln(w, "ID\tNAME\tTYPE\tPORT\tNODE")
+				fmt.Fprintln(w, "--\t----\t----\t----\t----")
+
+				for _, s := range data.Servers {
+					displayType := s.Type
+					if displayType == "" {
+						displayType = "unknown"
+					}
+					fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\n", s.ID, s.Name, displayType, s.Port, s.Node.Name)
+				}
+				w.Flush()
+
+				fmt.Printf("\nTotal Servers: %d\n", data.Paging.Total)
 
 				return
 			}
