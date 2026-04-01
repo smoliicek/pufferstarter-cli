@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"smoliicek/pufferstarter/pkg/auth"
 	"smoliicek/pufferstarter/pkg/operator"
 	"smoliicek/pufferstarter/pkg/probe"
@@ -41,10 +42,14 @@ type Server struct {
 func main() {
 	var serverID string
 	var status string
+	var envPath string
 
 	rootCmd := &cobra.Command{
 		Use:   "pufferstarter-cli",
 		Short: "A CLI tool for server management",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return loadEnv(envPath)
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			if cmd.Flags().Changed("listAll") {
 				fmt.Println("Listing all servers...")
@@ -220,6 +225,7 @@ func main() {
 		},
 	}
 
+	rootCmd.PersistentFlags().StringVar(&envPath, "env", "", "Path to the .env file")
 	rootCmd.Flags().StringVar(&serverID, "id", "", "Set the Server ID (length: 8)")
 	rootCmd.Flags().BoolP("listAll", "l", false, "Lists all servers and IDs")
 	rootCmd.Flags().BoolP("getInfo", "g", false, "Gets info about a server (requires --id)")
@@ -230,20 +236,45 @@ func main() {
 	}
 }
 
-func getToken() (string, error) {
-	err := godotenv.Load()
-	if err != nil {
-		panic("Error loading .env file")
+func loadEnv(customPath string) error {
+	if customPath != "" {
+		if _, err := os.Stat(customPath); os.IsNotExist(err) {
+			return fmt.Errorf("specified env file not found: %s", customPath)
+		}
+		return godotenv.Load(customPath)
 	}
 
+	// Try .env in current directory
+	if _, err := os.Stat(".env"); err == nil {
+		return godotenv.Load()
+	}
+
+	// Try CONFIG_DIR/pufferstarter/.env
+	configDir, err := os.UserConfigDir()
+	if err == nil {
+		pufferConfig := filepath.Join(configDir, "pufferstarter", ".env")
+		if _, err := os.Stat(pufferConfig); err == nil {
+			return godotenv.Load(pufferConfig)
+		}
+	}
+
+	// It's okay if no .env file is found, as long as required env vars are set in the environment
+	return nil
+}
+
+func getToken() (string, error) {
 	clientID := os.Getenv("CLIENT_ID")
 	clientSecret := os.Getenv("CLIENT_SECRET")
 	serverIP := os.Getenv("SERVER_IP")
 
-	token, err := auth.GetAuthToken(clientID, clientSecret, serverIP)
-	if err != nil {
-		panic(err)
+	if clientID == "" || clientSecret == "" || serverIP == "" {
+		return "", fmt.Errorf("missing required environment variables: CLIENT_ID, CLIENT_SECRET, SERVER_IP")
 	}
 
-	return token, err
+	token, err := auth.GetAuthToken(clientID, clientSecret, serverIP)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
