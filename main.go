@@ -21,14 +21,19 @@ type ServerResponse struct {
 	} `json:"paging"`
 }
 
+type SingleServerResponse struct {
+	Server Server `json:"server"`
+}
+
 type Server struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+	IP   string `json:"ip"`
 	Port int    `json:"port"`
 	Type string `json:"type"`
 	Node struct {
-		ID         int    `json:"id"`   // Added this
-		Name       string `json:"name"` // Added this
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
 		PublicHost string `json:"publicHost"`
 	} `json:"node"`
 }
@@ -99,9 +104,47 @@ func main() {
 					fmt.Println("You need to specify --id to run this function.")
 					os.Exit(1)
 				}
-				fmt.Printf("Getting info for server %s\n", serverID)
-				fmt.Println("Function not yet implemented.")
-				// getServerInfo(ip, token, 0, serverID)
+				fmt.Printf("Getting info for server... %s\n", serverID)
+
+				authToken, err := getToken()
+				if err != nil {
+					fmt.Printf("Error getting auth token: %v\n", err)
+					os.Exit(1)
+				}
+
+				serverIP := os.Getenv("SERVER_IP")
+
+				output, err := probe.GetServer(serverIP, authToken, serverID)
+				if err != nil {
+					fmt.Printf("Error getting server info: %v\n", err)
+					os.Exit(1)
+				}
+
+				if output == "" {
+					fmt.Printf("Server info is empty.\n")
+					os.Exit(1)
+				}
+
+				var data SingleServerResponse
+				err = json.Unmarshal([]byte(output), &data)
+				if err != nil {
+					fmt.Printf("Error parsing response: %v\n", err)
+					os.Exit(1)
+				}
+
+				s := data.Server
+				w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+
+				fmt.Fprintln(w, "ID\tNAME\tIP\tPORT\tTYPE\tNODE")
+				fmt.Fprintln(w, "--\t----\t--\t----\t----\t----")
+
+				displayType := s.Type
+				if displayType == "" {
+					displayType = "unknown"
+				}
+				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%s\n", s.ID, s.Name, s.IP, s.Port, displayType, s.Node.Name)
+				w.Flush()
+
 				return
 			}
 
