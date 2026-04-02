@@ -25,6 +25,8 @@ Flags:
   - Displays the help dialog, as seen above.
 - `--id` option
   - Sets the ServerID. This option cannot be the only option set while starting PufferStarter.
+- `--env` option
+  - Sets the path to the .env file. This option cannot be the only option set while starting PufferStarter.
 - `-l, --listAll` option
   - Lists all server names and IDs
 - `-g, --getInfo` option

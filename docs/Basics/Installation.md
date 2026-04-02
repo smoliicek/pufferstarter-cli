@@ -12,9 +12,13 @@ To install PufferStarter, you need to go to [GitHub Releases](https://github.com
 - `pufferstarter-cli.tar.gz` for Linux and other UNIX systems
 
 After you download those files, continue with these instructions for you OS of choice:
+
 #### For Windows:
+
 - You are all set, just start the app in a terminal and you are good to go!
+
 #### For Linux and other UNIX systems:
+
 - Untar the file using `xd pufferstarter-cli.tar.gz`
 - Run this command `chmod +x ./pufferstarter-cli` so you can execute it
 - Start the `pufferstarter-cli` file you extracted, and you are all set!
