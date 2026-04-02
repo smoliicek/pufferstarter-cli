@@ -20,7 +20,12 @@ func GetAuthToken(clientID, clientSecret, serverIP string) (string, error) {
 
 	bodyReader := strings.NewReader(data.Encode())
 
-	req, err := http.NewRequest("POST", "https://"+serverIP+"/oauth2/token", bodyReader)
+	u, err := url.JoinPath("https://"+serverIP, "oauth2/token")
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", u, bodyReader)
 	if err != nil {
 		return "", err
 	}

@@ -4,31 +4,35 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 func ChangeServerStatus(serverIP, authToken, serverID, status string) (string, error) {
 
-	baseURL := fmt.Sprintf("https://%s/api/servers/%s/", serverIP, serverID)
-
-	var apiLink string
-	var bodyReader io.Reader = nil
-
+	var action string
 	switch status {
 	case "on":
 		fmt.Println("Turning server on")
-		apiLink = baseURL + "start"
+		action = "start"
 	case "off":
 		fmt.Println("Turning server off")
-		apiLink = baseURL + "stop"
+		action = "stop"
 	case "restart":
 		fmt.Println("Restarting server")
-		apiLink = baseURL + "restart"
+		action = "restart"
 	case "kill":
 		fmt.Println("Killing server")
-		apiLink = baseURL + "kill"
+		action = "kill"
 	default:
 		return "", fmt.Errorf("invalid status: %s, use on, off, restart or kill", status)
 	}
+
+	apiLink, err := url.JoinPath("https://"+serverIP, "api", "servers", serverID, action)
+	if err != nil {
+		return "", err
+	}
+
+	var bodyReader io.Reader = nil
 
 	req, err := http.NewRequest("POST", apiLink, bodyReader)
 	if err != nil {

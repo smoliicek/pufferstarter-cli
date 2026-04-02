@@ -27,16 +27,32 @@ type SingleServerResponse struct {
 }
 
 type Server struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	IP   string `json:"ip"`
-	Port int    `json:"port"`
-	Type string `json:"type"`
-	Node struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	IP         string `json:"ip"`
+	Port       int    `json:"port"`
+	Type       string `json:"type"`
+	Running    bool   `json:"running"`
+	Installing bool   `json:"installing"`
+	Stats      *Stats `json:"stats"`
+	Node       struct {
 		ID         int    `json:"id"`
 		Name       string `json:"name"`
 		PublicHost string `json:"publicHost"`
 	} `json:"node"`
+}
+
+type Stats struct {
+	CPU    float64   `json:"cpu"`
+	Memory float64   `json:"memory"`
+	JVM    *JVMStats `json:"jvm"`
+}
+
+type JVMStats struct {
+	HeapTotal      float64 `json:"heapTotal"`
+	HeapUsed       float64 `json:"heapUsed"`
+	MetaspaceTotal float64 `json:"metaspaceTotal"`
+	MetaspaceUsed  float64 `json:"metaspaceUsed"`
 }
 
 func main() {
@@ -87,15 +103,23 @@ func main() {
 
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
-				fmt.Fprintln(w, "ID\tNAME\tTYPE\tPORT\tNODE")
-				fmt.Fprintln(w, "--\t----\t----\t----\t----")
+				fmt.Fprintln(w, "ID\tNAME\tSTATUS\tTYPE\tPORT\tNODE")
+				fmt.Fprintln(w, "--\t----\t------\t----\t----\t----")
 
 				for _, s := range data.Servers {
 					displayType := s.Type
 					if displayType == "" {
 						displayType = "unknown"
 					}
-					fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\n", s.ID, s.Name, displayType, s.Port, s.Node.Name)
+
+					statusStr := "OFF"
+					if s.Installing {
+						statusStr = "INSTALLING"
+					} else if s.Running {
+						statusStr = "ON"
+					}
+
+					fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\t%s\n", s.ID, s.Name, statusStr, displayType, s.Port, s.Node.Name)
 				}
 				w.Flush()
 
@@ -140,15 +164,36 @@ func main() {
 				s := data.Server
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
-				fmt.Fprintln(w, "ID\tNAME\tIP\tPORT\tTYPE\tNODE")
-				fmt.Fprintln(w, "--\t----\t--\t----\t----\t----")
+				fmt.Fprintln(w, "ID\tNAME\tSTATUS\tIP\tPORT\tCPU\tMEMORY\tTYPE\tNODE")
+				fmt.Fprintln(w, "--\t----\t------\t--\t----\t---\t------\t----\t----")
 
 				displayType := s.Type
 				if displayType == "" {
 					displayType = "unknown"
 				}
-				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%s\n", s.ID, s.Name, s.IP, s.Port, displayType, s.Node.Name)
+
+				statusStr := "OFF"
+				if s.Installing {
+					statusStr = "INSTALLING"
+					} else if s.Running {
+					statusStr = "ON"
+				}
+
+				cpuStr := "N/A"
+				memStr := "N/A"
+				if s.Stats != nil {
+					cpuStr = fmt.Sprintf("%.2f%%", s.Stats.CPU)
+					memStr = fmt.Sprintf("%.2f MB", s.Stats.Memory/1024/1024)
+				}
+
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\t%s\t%s\t%s\t%s\n", s.ID, s.Name, statusStr, s.IP, s.Port, cpuStr, memStr, displayType, s.Node.Name)
 				w.Flush()
+
+				if s.Stats != nil && s.Stats.JVM != nil {
+					fmt.Printf("\nJVM Stats:\n")
+					fmt.Printf("  Heap Used:      %.2f / %.2f MB\n", s.Stats.JVM.HeapUsed/1024/1024, s.Stats.JVM.HeapTotal/1024/1024)
+					fmt.Printf("  Metaspace Used: %.2f / %.2f MB\n", s.Stats.JVM.MetaspaceUsed/1024/1024, s.Stats.JVM.MetaspaceTotal/1024/1024)
+				}
 
 				return
 			}

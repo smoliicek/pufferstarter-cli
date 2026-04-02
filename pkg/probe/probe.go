@@ -1,23 +1,63 @@
 package probe
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"net/url"
 )
 
-func GetAllServers(serverIP, authToken string) (string, error) {
-	apiLink := fmt.Sprintf("https://%s/api/servers/", serverIP)
-	var bodyReader io.Reader = nil
+func GetServerStatus(serverIP, authToken, serverID string) (bool, bool, error) {
+	apiLink, err := url.JoinPath("https://"+serverIP, "api", "servers", serverID, "status")
+	if err != nil {
+		return false, false, err
+	}
 
-	req, err := http.NewRequest("GET", apiLink, bodyReader)
+	req, err := http.NewRequest("GET", apiLink, nil)
+	if err != nil {
+		return false, false, err
+	}
+
+	req.Header.Set("User-Agent", "pufferstarter-cli/4.0")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "Bearer "+authToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, false, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return false, false, fmt.Errorf("request failed: %s", resp.Status)
+	}
+
+	var status struct {
+		Installing bool `json:"installing"`
+		Running    bool `json:"running"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&status); err != nil {
+		return false, false, err
+	}
+
+	return status.Running, status.Installing, nil
+}
+
+func GetAllServers(serverIP, authToken string) (string, error) {
+	apiLink, err := url.JoinPath("https://"+serverIP, "api", "servers")
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("GET", apiLink, nil)
 	if err != nil {
 		return "", err
 	}
 
 	req.Header.Set("User-Agent", "pufferstarter-cli/4.0")
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", "Bearer "+authToken)
 
 	client := &http.Client{}
@@ -27,39 +67,83 @@ func GetAllServers(serverIP, authToken string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("request failed: %s", resp.Status)
+	}
+
+	var data struct {
+		Servers []map[string]interface{} `json:"servers"`
+		Paging  interface{}              `json:"paging"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return "", err
+	}
+
+	for _, s := range data.Servers {
+		id, ok := s["id"].(string)
+		if ok {
+			running, installing, _ := GetServerStatus(serverIP, authToken, id)
+			s["running"] = running
+			s["installing"] = installing
+		}
+	}
+
+	enrichedBody, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
 
-	if resp.StatusCode != 200 && resp.StatusCode != 202 && resp.StatusCode != 204 {
-		return "", fmt.Errorf("request failed: %s", resp.Status)
+	return string(enrichedBody), nil
+}
+
+func GetServerStats(serverIP, authToken, serverID string) (map[string]interface{}, error) {
+	apiLink, err := url.JoinPath("https://"+serverIP, "api", "servers", serverID, "stats")
+	if err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == 400 {
-		return "", fmt.Errorf("bad request: %s", body)
+	req, err := http.NewRequest("GET", apiLink, nil)
+	if err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == 401 {
-		return "", fmt.Errorf("unauthorized: %s", body)
+	req.Header.Set("User-Agent", "pufferstarter-cli/4.0")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", "Bearer "+authToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed: %s", resp.Status)
 	}
 
-	return string(body), nil
+	var stats map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&stats); err != nil {
+		return nil, err
+	}
+
+	return stats, nil
 }
 
 func GetServer(serverIP, authToken, serverID string) (string, error) {
-	apiLink := fmt.Sprintf("https://%s/api/servers/%s", serverIP, serverID)
+	apiLink, err := url.JoinPath("https://"+serverIP, "api", "servers", serverID)
+	if err != nil {
+		return "", err
+	}
 
-	var bodyReader io.Reader = nil
-
-	req, err := http.NewRequest("GET", apiLink, bodyReader)
+	req, err := http.NewRequest("GET", apiLink, nil)
 	if err != nil {
 		return "", err
 	}
 
 	req.Header.Set("User-Agent", "pufferstarter-cli/4.0")
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Authorization", "Bearer "+authToken)
 
 	client := &http.Client{}
@@ -69,22 +153,29 @@ func GetServer(serverIP, authToken, serverID string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("request failed: %s", resp.Status)
+	}
+
+	var data struct {
+		Server map[string]interface{} `json:"server"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return "", err
+	}
+
+	running, installing, _ := GetServerStatus(serverIP, authToken, serverID)
+	data.Server["running"] = running
+	data.Server["installing"] = installing
+
+	stats, _ := GetServerStats(serverIP, authToken, serverID)
+	data.Server["stats"] = stats
+
+	enrichedBody, err := json.Marshal(data)
 	if err != nil {
 		return "", err
 	}
 
-	if resp.StatusCode != 200 && resp.StatusCode != 202 && resp.StatusCode != 204 {
-		return "", fmt.Errorf("request failed: %s", resp.Status)
-	}
-
-	if resp.StatusCode == 400 {
-		return "", fmt.Errorf("bad request: %s", body)
-	}
-
-	if resp.StatusCode == 401 {
-		return "", fmt.Errorf("unauthorized: %s", body)
-	}
-
-	return string(body), nil
+	return string(enrichedBody), nil
 }
