@@ -19,7 +19,7 @@ After you download those files, continue with these instructions for you OS of c
 
 #### For Linux and other UNIX systems:
 
-- Untar the file using `xd pufferstarter-cli.tar.gz`
+- Untar the file using `tar xzf pufferstarter-cli.tar.gz`
 - Run this command `chmod +x ./pufferstarter-cli` so you can execute it
 - Start the `pufferstarter-cli` file you extracted, and you are all set!
 

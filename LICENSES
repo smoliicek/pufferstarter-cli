@@ -1,4 +1,6 @@
 PufferStarter uses these opensource projects at its base:
 
+- The Go Programming Language @ https://go.googlesource.com/go as the language of choice
+
 - PufferPanel and its API @ https://github.com/pufferpanel/pufferpanel
 Under its Apache License 2.0 found here: https://github.com/pufferpanel/pufferpanel/blob/v3/LICENSE
