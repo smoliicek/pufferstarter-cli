@@ -3,7 +3,7 @@
 PufferStarter-cli is a command-line interface tool designed to manage servers on [PufferPanel](https://www.pufferpanel.com/) (v3.0+). It allows you to list servers, view detailed server information (including resource usage and JVM stats), and control server power states (start, stop, restart, kill) directly from your terminal.
 
 > [!NOTE]
-> For usage with older PufferPanel versions, use the older C++ based version - [https://github.com/smoliicek/pufferstarter-cli/tree/OLD-PS-cpp-version]
+> For usage with older PufferPanel versions, use the older C++ based version - <https://github.com/smoliicek/pufferstarter-cli/tree/OLD-PS-cpp-version>
 
 - **List All Servers**: Quickly see all servers on your panel, their IDs, status, and ports.
 - **Server Information**: Get detailed stats for a specific server, including:
