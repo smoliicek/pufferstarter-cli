@@ -6,23 +6,19 @@ This guide requires you to have sudo privileges on your user account (for instal
 
 ### Building dependencies
 - git
+- GNU make
 - go
 
 !> Make sure you have all of these programs installed, and in your PATH variable on your system before continuing.
 
 ## Building process
-1) Automatic way
+
 - Clone PufferStarters repository by running `git clone https://github.com/smoliicek/pufferstarter-cli`
 - Change your working directory to the cloned repo `cd pufferstarter-cli`
-- Run the automatic build file `bash ./build.sh`
-- Your compiled executable is now present at `./pufferstarter_cli`
-2) Manual way
-- Clone PufferStarters repository by running `git clone https://github.com/smajlll/pufferstarter-cli`
-- Change your working directory to the cloned repo `cd pufferstarter-cli`
-- Create a new folder for your build files, and cd into it `mkdir build && cd build`
-- Build the project using `go build ../main.go -o pufferstarter_cli`
-- Make the compiled file executable by running `chmod +x ./pufferstarter_cli`
-- Your compiled executable is now present at this location `./pufferstartel_cli`
+- Build the app `make OS/ARCH`
+  - OS can be: linux or darwin
+  - ARCH can be: amd64 or arm64
+- Your .exe file is now present at this location `./dist/pufferstarter_cli.exe`
 
 ### And what next?
 PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](../Configuration/env.md) for instructiuons.
