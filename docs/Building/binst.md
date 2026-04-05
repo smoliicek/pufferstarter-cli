@@ -1,4 +1,4 @@
 # Building instructions
 Please choose your OS:
-- [Windows](../Building/WIndows.md)
+- [Windows](../Building/Windows.md)
 - [Linux](../Building/Linux_Unix.md)

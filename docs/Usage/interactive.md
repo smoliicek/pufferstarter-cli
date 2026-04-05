@@ -1,6 +1,5 @@
 # Interactive mode
-PufferStarter has two modes. In this document, we will talk about the interactive mode of PufferStarter. 
+From the start, PufferStarter had two modes. However, after PufferPanel got a new update, the old C++ version of PufferStarter was no longer usable.
 
-### Starting interactive mode
-You can use interactive mode by starting PufferStarter using the `-i` flag. The interactive mode will now start, after starting interactive mode, your config file will also be created as stated [here](../Configuration/configuration-file.md) in the second method. 
-
+Interactive mode is planned, however, it was not my main goal of the rewrite.
+Please use [the non-interactive mode](../Usage/noninteractive.md) for now!
