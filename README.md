@@ -2,9 +2,8 @@
 
 PufferStarter-cli is a command-line interface tool designed to manage servers on [PufferPanel](https://www.pufferpanel.com/) (v3.0+). It allows you to list servers, view detailed server information (including resource usage and JVM stats), and control server power states (start, stop, restart, kill) directly from your terminal.
 
-!> For usage with older PufferPanel versions, use the older C++ based version - https://github.com/smoliicek/pufferstarter-cli/tree/OLD-PS-cpp-version
-
-## Features
+> [!NOTE]
+> For usage with older PufferPanel versions, use the older C++ based version - [https://github.com/smoliicek/pufferstarter-cli/tree/OLD-PS-cpp-version]
 
 - **List All Servers**: Quickly see all servers on your panel, their IDs, status, and ports.
 - **Server Information**: Get detailed stats for a specific server, including:
@@ -13,8 +12,9 @@ PufferStarter-cli is a command-line interface tool designed to manage servers on
   - Node information and IP/Port details.
 - **Power Management**: Control your servers with simple commands (`on`, `off`, `restart`, `kill`).
 
+> [!WARNING]
+> This is a really quick guide, if you don't know what you're doing, read the [docs](https://docs.smoliicek.cz).
 
-!> This is a really quick guide, if you don't know what you're doing, read the [docs](https://docs.smoliicek.cz).
 ## Installation
 
 ### From Binaries
@@ -53,3 +53,7 @@ go build -o pufferstarter-cli main.go
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+
+## Badges
+
+![Made with Go](https://forthebadge.com/badges/made-with-go.svg) ![Built with <3](https://forthebadge.com/badges/built-with-love.svg)
