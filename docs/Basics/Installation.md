@@ -21,6 +21,7 @@ After you download those files, continue with these instructions for you OS of c
 
 - Untar the file using `tar xzf pufferstarter-cli.tar.gz`
 - Run this command `chmod +x ./pufferstarter-cli` so you can execute it
+- Move the file to your Path `sudo mv ./pufferstarter-cli /usr/local/bin/`
 - Start the `pufferstarter-cli` file you extracted, and you are all set!
 
 ### And what next?
