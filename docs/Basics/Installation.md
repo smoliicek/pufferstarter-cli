@@ -8,8 +8,8 @@ For PufferStarter to work property, you need:
 
 ### Installation
 To install PufferStarter, you need to go to [GitHub Releases](https://github.com/smoliicek/pufferstarter-cli/releases/), and download the following files for your OS:
-- `pufferstarter-cli.exe` for Windows
-- `pufferstarter-cli.tar.gz` for Linux and other UNIX systems
+- `pufferstarter-cli-windows-amd64.exe` for Windows
+- `pufferstarter-cli-OS-arch` for Linux and other UNIX systems
 
 After you download those files, continue with these instructions for you OS of choice:
 
@@ -19,10 +19,9 @@ After you download those files, continue with these instructions for you OS of c
 
 #### For Linux and other UNIX systems:
 
-- Untar the file using `tar xzf pufferstarter-cli.tar.gz`
-- Run this command `chmod +x ./pufferstarter-cli` so you can execute it
-- Move the file to your Path `sudo mv ./pufferstarter-cli /usr/local/bin/`
-- Start the `pufferstarter-cli` file you extracted, and you are all set!
+- Run this command `chmod +x ./pufferstarter-cli*` so you can execute it
+- Move the file to your Path `sudo mv ./pufferstarter-cli* /usr/local/bin/pufferstarter_cli`
+- Start the `pufferstarter-cli` executable!
 
 ### And what next?
 PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](../Configuration/env.md) for instructiuons.

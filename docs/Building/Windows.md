@@ -16,7 +16,7 @@ This guide requires you to have Administrator privileges on your user account (f
 
 - Clone PufferStarters repository by running `git clone https://github.com/smoliicek/pufferstarter-cli`
 - Change your working directory to the cloned repo `cd pufferstarter-cli`
-- Build the app `make windows/ARCH` (ARCH is amd64 or arm64)
+- Build the app `make windows/amd64`
 - Your .exe file is now present at this location `.\dist\pufferstartel_cli.exe`
 
 ### And what next?
