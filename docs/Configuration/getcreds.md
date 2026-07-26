@@ -1,7 +1,7 @@
 # Getting your OAuth2 Credentials
 First log into your PufferPanel, using your email and password and click on your profile picture in the top right.
 
-![img.png](imgs/profile.png)
+![Profile](imgs/profile.png)
 
 Down in the "OAuth2 Clients" section and click on "Create new OAuth2 client"
 
