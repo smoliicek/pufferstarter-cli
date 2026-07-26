@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"smoliicek/pufferstarter/pkg/auth"
-	"smoliicek/pufferstarter/pkg/operator"
-	"smoliicek/pufferstarter/pkg/probe"
+	"github.com/smoliicek/pufferstarter-cli/pkg/auth"
+	"github.com/smoliicek/pufferstarter-cli/pkg/operator"
+	"github.com/smoliicek/pufferstarter-cli/pkg/probe"
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"

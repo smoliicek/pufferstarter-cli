@@ -1,4 +1,4 @@
-module smoliicek/pufferstarter
+module github.com/smoliicek/pufferstarter-cli
 
 go 1.25.6
 

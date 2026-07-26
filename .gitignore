@@ -10,3 +10,9 @@ a.out
 .env
 
 dist/
+
+# fedora build
+*.rpm
+*.src.rpm
+*.spm
+results_*/
