@@ -12,7 +12,7 @@
 
 # https://github.com/smoliicek/pufferstarter-cli
 %global goipath         github.com/smoliicek/pufferstarter-cli
-Version:                4.0.1
+Version:                4.0.2
 
 %gometa -f
 
