@@ -24,4 +24,4 @@ After you download those files, continue with these instructions for you OS of c
 - Start the `pufferstarter-cli` executable!
 
 ### And what next?
-PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](../Configuration/env.md) for instructiuons.
+PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](Configuration/env.md) for instructiuons.

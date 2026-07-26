@@ -20,4 +20,4 @@ This guide requires you to have Administrator privileges on your user account (f
 - Your .exe file is now present at this location `.\dist\pufferstartel_cli.exe`
 
 ### And what next?
-PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](../Configuration/env.md) for instructiuons.
+PufferStarter relies on enviroment variables or `.env` files. See [Enviroment variables](Configuration/env.md) for instructiuons.

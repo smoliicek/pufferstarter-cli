@@ -1,7 +1,7 @@
 # Enviroment variables
 PufferStarter uses enviroment variables for configuration.
 
-!> First, get your [OAuth2 credentials](../Configuration/getcreds.md), then come back to configure PufferStarter.
+!> First, get your [OAuth2 credentials](Configuration/getcreds.md), then come back to configure PufferStarter.
 
 ## Order of loading
 

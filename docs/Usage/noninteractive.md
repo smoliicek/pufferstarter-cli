@@ -2,7 +2,7 @@
 
 Puffer-starter features an easy to understand CLI.
 
-!> Please see the docs about [configuring PufferStarter](../Configuration/configuration-file.md) before continuing
+!> Please see the docs about [configuring PufferStarter](Configuration/configuration-file.md) before continuing
 
 ### Available options
 ```
