@@ -21,19 +21,17 @@ CLI tool for managing your PufferPanel servers. List, inspect, and control
 power state, all from your terminal!}
 
 %global golicenses      LICENSE LICENSES
-%global godocs          docs README.md
+%global godocs          README.md
 
 Name:           pufferstarter-cli
 Release:        %autorelease
-Summary:        CLI tool for managing your PufferPanel servers. List, inspect, and control power state, all from your terminal
+Summary:        CLI tool for managing your PufferPanel servers
 
 License:        Apache-2.0
 URL:            %{gourl}
 Source:         %{gosource}
 
 %description %{common_description}
-
-%gopkg
 
 %prep
 %goprep -A
@@ -50,11 +48,8 @@ Source:         %{gosource}
 %endif
 
 %install
-%gopkginstall
-%if %{without bootstrap}
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
-%endif
 
 %if %{without bootstrap}
 %if %{with check}
@@ -66,11 +61,9 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %if %{without bootstrap}
 %files
 %license LICENSE LICENSES
-%doc docs README.md
+%doc README.md
 %{_bindir}/pufferstarter-cli
 %endif
-
-%gopkgfiles
 
 %changelog
 %autochangelog
